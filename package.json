@@ -38,6 +38,7 @@
     "url": "https://github.com/Wolox/lm-express-js/issues"
   },
   "dependencies": {
+    "bcrypt": "^3.0.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
