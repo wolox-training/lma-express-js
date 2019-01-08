@@ -10,6 +10,20 @@ exports.validUser = {
   password: '12345678'
 };
 
+exports.userWithWrongPassword = {
+  firstName: 'john',
+  lastName: 'doe',
+  email: 'johndoe@wolox.com.ar',
+  password: '1234567890'
+};
+
+exports.userWithWrongEmail = {
+  firstName: 'john',
+  lastName: 'doe',
+  email: 'johndoe@wwwolox.com.ar',
+  password: '12345678'
+};
+
 exports.userWithShortPassword = {
   firstName: 'john',
   lastName: 'doe',
@@ -41,4 +55,10 @@ exports.createUserRequest = user =>
   chai
     .request(server)
     .post('/users')
+    .send(user);
+
+exports.signInUserRequest = user =>
+  chai
+    .request(server)
+    .post('/users/sessions')
     .send(user);
