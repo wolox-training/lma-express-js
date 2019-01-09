@@ -1,7 +1,8 @@
 'use strict';
 
 const chai = require('chai'),
-  server = require('../../app');
+  server = require('../../app'),
+  AUTHORIZATION_HEADER = require('../../app/services/session').AUTHORIZATION_HEADER;
 
 exports.validUser = {
   firstName: 'john',
@@ -62,3 +63,10 @@ exports.signInUserRequest = user =>
     .request(server)
     .post('/users/sessions')
     .send(user);
+
+exports.usersIndexRequest = (auth, query = '') =>
+  chai
+    .request(server)
+    .get(`/users${query}`)
+    .set(AUTHORIZATION_HEADER, auth)
+    .send();
