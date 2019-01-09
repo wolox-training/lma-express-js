@@ -10,7 +10,9 @@ const chai = require('chai'),
     userWithShortPassword,
     userWithNonAlphanumericPassword,
     missingParamsUser,
-    userWithInvalidEmailDomain
+    userWithInvalidEmailDomain,
+    signInUserRequest,
+    usersIndexRequest
   } = require('./../utils/users'),
   config = require('../../config'),
   chaiHttp = require('chai-http'),
@@ -67,6 +69,29 @@ describe('users', () => {
         expect(res).have.status(400);
         done();
       });
+    });
+  });
+  describe('/users GET', () => {
+    it('should return a paginated list of users', async () => {
+      await User.create(validUser);
+      const signIn = await signInUserRequest(validUser);
+      const token = signIn.headers.authorization;
+      const res = await usersIndexRequest(token, '?page=1&recordsPerPage=5');
+      expect(Object.keys(res.body)).to.eql(['users', 'count', 'pages']);
+      dictum.chai(res, 'returns a paginated list of users');
+    });
+    it('should return a default pagination when no query params are present', async () => {
+      await User.create(validUser);
+      const signIn = await signInUserRequest(validUser);
+      const token = signIn.headers.authorization;
+      const res = await usersIndexRequest(token);
+      expect(Object.keys(res.body)).to.eql(['users', 'count', 'pages']);
+    });
+    it('should not return any value when the token is invalid', async () => {
+      await User.create(validUser);
+      const token = 'invalid';
+      const res = await usersIndexRequest(token);
+      expect(res.body.internal_code).to.eql(401);
     });
   });
 });

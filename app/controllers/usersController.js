@@ -16,3 +16,22 @@ exports.create = async (req, res) => {
     res.status(400).send(error);
   }
 };
+
+exports.index = async (req, res) => {
+  try {
+    const requestedPage = req.query.page || 1;
+    const requestedRecordsPerPage = req.query.recordsPerPage || 20;
+    const offset = (requestedPage - 1) * requestedRecordsPerPage;
+    const limit = requestedRecordsPerPage;
+    const result = await User.findAndCountAll({
+      attributes: ['firstName', 'lastName', 'email'],
+      offset,
+      limit
+    });
+    const pages = Math.ceil(result.count / limit);
+    res.status(200).send({ users: result.rows, count: result.count, pages });
+  } catch (error) {
+    logger.error(error);
+    res.status(400).send(error);
+  }
+};
